@@ -122,15 +122,15 @@ export function CheckoutDialog({ open, onOpenChange }: { open: boolean; onOpenCh
       ...lines,
       `Total: ${formatBRL(subtotalCents)} (frete grátis)`,
       "",
-      customer.fullName && `Nome: ${customer.fullName}`,
-      customer.cpf && `CPF: ${customer.cpf}`,
-      customer.phone && `Telefone: ${customer.phone}`,
-      customer.email && `E-mail: ${customer.email}`,
-      address.street &&
-        `Endereço: ${address.street}, ${address.number}${address.complement ? ` - ${address.complement}` : ""}, ${address.neighborhood}, ${address.city}/${address.state} - CEP ${address.cep}`,
+      customer.fullName ? `Nome: ${customer.fullName}` : null,
+      customer.cpf ? `CPF: ${customer.cpf}` : null,
+      customer.phone ? `Telefone: ${customer.phone}` : null,
+      customer.email ? `E-mail: ${customer.email}` : null,
+      address.street
+        ? `Endereço: ${address.street}, ${address.number}${address.complement ? ` - ${address.complement}` : ""}, ${address.neighborhood}, ${address.city}/${address.state} - CEP ${address.cep}`
+        : null,
     ]
-      .filter((l) => l !== "" || true)
-      .filter((l) => l !== false && l !== undefined)
+      .filter((l): l is string => typeof l === "string" && (l === "" || l.length > 0))
       .join("\n");
   }
 
