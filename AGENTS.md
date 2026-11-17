@@ -28,3 +28,7 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- Storefront data lives in Lovable Cloud: `products` is public-read; `customers`, `orders`, `order_items` are admin-only via `has_role` — orders are written only by the `createOrder` server function, which re-reads prices from `products` so the browser never sets prices.
+- Cart state is client-side (React context + localStorage) in `src/lib/cart.tsx`; it is not persisted in the database until checkout.
