@@ -28,13 +28,15 @@ const steps = [
 
 const emptyCustomer = { fullName: "", cpf: "", phone: "", email: "" };
 const emptyAddress = { cep: "", street: "", number: "", complement: "", neighborhood: "", city: "", state: "" };
+type FieldKey = keyof typeof emptyCustomer | keyof typeof emptyAddress;
+type Errors = Partial<Record<FieldKey, string>>;
 
 function Field({
   label,
   error,
   className = "",
   ...props
-}: React.InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string }) {
+}: React.InputHTMLAttributes<HTMLInputElement> & { label: string; error?: string | undefined }) {
   return (
     <label className={`block ${className}`}>
       <span className="mb-1.5 block text-xs font-medium text-foreground">{label}</span>
@@ -53,7 +55,7 @@ export function CheckoutDialog({ open, onOpenChange }: { open: boolean; onOpenCh
   const [step, setStep] = useState<Step>(0);
   const [customer, setCustomer] = useState(emptyCustomer);
   const [address, setAddress] = useState(emptyAddress);
-  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [errors, setErrors] = useState<Errors>({});
   const [cepStatus, setCepStatus] = useState<"idle" | "loading" | "ok" | "error">("idle");
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState<{ orderNumber: number; link: string } | null>(null);
@@ -72,7 +74,7 @@ export function CheckoutDialog({ open, onOpenChange }: { open: boolean; onOpenCh
   }
 
   function validateCustomer() {
-    const e: Record<string, string> = {};
+    const e: Errors = {};
     if (customer.fullName.trim().length < 3) e.fullName = "Informe seu nome completo";
     if (!isValidCPF(customer.cpf)) e.cpf = "CPF inválido";
     if (![10, 11].includes(onlyDigits(customer.phone).length)) e.phone = "Telefone inválido";
@@ -82,7 +84,7 @@ export function CheckoutDialog({ open, onOpenChange }: { open: boolean; onOpenCh
   }
 
   function validateAddress() {
-    const e: Record<string, string> = {};
+    const e: Errors = {};
     if (onlyDigits(address.cep).length !== 8) e.cep = "CEP inválido";
     if (address.street.trim().length < 2) e.street = "Obrigatório";
     if (!address.number.trim()) e.number = "Obrigatório";
